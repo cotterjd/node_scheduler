@@ -12,11 +12,11 @@ const
       triggered = isRightDay;
 		
     if(triggered) {
-			log("triggered at " + moment().format("MM/DD/YYYY HH:mm:ss"));
+      log("triggered at " + moment().format("MM/DD/YYYY HH:mm:ss"));
       func();
     } else {
-    	log (moment().format("MM/DD/YYYY HH:mm:ss") + ": running...waiting for next trigger");
-		}
+      log (moment().format("MM/DD/YYYY HH:mm:ss") + ": running...waiting for next trigger");
+    }
     checkTime(func, hour, minute, interval);
   }
 , checkTime = function checkTime (func, hour, minute, interval){

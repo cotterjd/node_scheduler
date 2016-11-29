@@ -9,7 +9,7 @@ const
       fiveAfter = moment().hour(hour).minute(minute + checkEvery_minutes/2).format("HH:mm"),
       isRightTime = now > fiveTill && now < fiveAfter,
       isRightDay = moment().day() != 0 && moment().day() != 6,
-      triggered = isRightDay;
+      triggered = isRightDay && isRightTime;
 		
     if(triggered) {
       log("triggered at " + moment().format("MM/DD/YYYY HH:mm:ss"));

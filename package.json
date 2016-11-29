@@ -1,0 +1,24 @@
+{
+  "name": "weekday_scheduler",
+  "version": "1.0.0",
+  "description": "simple way to run weekdaily functions",
+  "main": "example.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/cotterjd/weekday_scheduler.git"
+  },
+  "keywords": [
+    "scheduler",
+    "node",
+    "javascript"
+  ],
+  "author": "Jordan Cotter",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/cotterjd/weekday_scheduler/issues"
+  },
+  "homepage": "https://github.com/cotterjd/weekday_scheduler#readme"
+}

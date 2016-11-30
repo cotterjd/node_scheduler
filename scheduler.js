@@ -5,7 +5,7 @@ const
 , timeoutFunc = function (func, hour, minute, interval) { 
     const
       now = moment().format("HH:mm"),
-			triggerTime = moment().hour(hour).minute(minute).format("HH:mm")
+      triggerTime = moment().hour(hour).minute(minute).format("HH:mm"),
       fiveTil = moment().hour(hour).minute(minute - checkEvery_minutes/2).format("HH:mm"),
       fiveAfter = moment().hour(hour).minute(minute + checkEvery_minutes/2).format("HH:mm"),
       isRightTime = now > fiveTil && now < fiveAfter,

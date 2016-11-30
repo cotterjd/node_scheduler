@@ -2,13 +2,13 @@ const
   moment = require('moment')
 , log = console.log
 , checkEvery_minutes = 10
-, triggerTime = moment().hour(hour).minute(minute).format("HH:mm")
 , timeoutFunc = function (func, hour, minute, interval) { 
     const
       now = moment().format("HH:mm"),
-      fiveTill = moment().hour(hour).minute(minute - checkEvery_minutes/2).format("HH:mm"),
+			triggerTime = moment().hour(hour).minute(minute).format("HH:mm")
+      fiveTil = moment().hour(hour).minute(minute - checkEvery_minutes/2).format("HH:mm"),
       fiveAfter = moment().hour(hour).minute(minute + checkEvery_minutes/2).format("HH:mm"),
-      isRightTime = now > fiveTill && now < fiveAfter,
+      isRightTime = now > fiveTil && now < fiveAfter,
       isRightDay = moment().day() != 0 && moment().day() != 6,
       triggered = isRightDay && isRightTime;
 		

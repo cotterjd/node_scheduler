@@ -2,6 +2,7 @@ const
   moment = require('moment')
 , log = console.log
 , checkEvery_minutes = 10
+, triggerTime = moment().hour(hour).minute(minute).format("HH:mm")
 , timeoutFunc = function (func, hour, minute, interval) { 
     const
       now = moment().format("HH:mm"),
@@ -15,7 +16,7 @@ const
       log("triggered at " + moment().format("MM/DD/YYYY HH:mm:ss"));
       func();
     } else {
-      log (moment().format("MM/DD/YYYY HH:mm:ss") + ": running...waiting for next trigger");
+      log (moment().format("MM/DD/YYYY HH:mm:ss") + ": running...waiting for next trigger at " + triggerTime);
     }
     checkTime(func, hour, minute, interval);
   }

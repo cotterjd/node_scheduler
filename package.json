@@ -20,5 +20,8 @@
   "bugs": {
     "url": "https://github.com/cotterjd/weekday_scheduler/issues"
   },
-  "homepage": "https://github.com/cotterjd/weekday_scheduler#readme"
+  "homepage": "https://github.com/cotterjd/weekday_scheduler#readme",
+  "dependencies": {
+    "moment": "^2.17.1"
+  }
 }

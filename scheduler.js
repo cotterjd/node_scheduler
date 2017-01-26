@@ -31,9 +31,9 @@ const
     checkTime(func, hour, minute, interval);
   }
 , checkTime = function checkTime (func, hour, minute, interval){
-    hour = hour || 8;
-    minute = minute || 30;
-    interval = interval || 600000;
+    hour = hour !== null ? hour : 8;
+    minute = minute !== null ? minute : 30;
+    interval = interval !== null ? interval : 600000;
 		const 
 			  timeObj = makeConversions(interval/2)
 			, lowerBound = moment()

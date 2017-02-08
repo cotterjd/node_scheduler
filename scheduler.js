@@ -1,6 +1,7 @@
-const
+var
   moment = require('moment')
 , log = console.log
+, firstRun = true 
 , makeConversions = function (milliseconds) {
 		const
 			ms= Math.floor((milliseconds%1000)),
@@ -15,25 +16,27 @@ const
 				h: h
 			}
 	}
-, timeoutFunc = function (func, hour, minute, interval, lowerBound, upperBound) { 
+, timeoutFunc = function (func, hour, minute, interval, lowerBound, upperBound, weekends) { 
     const
       now = moment().format("HH:mm:ss.SSS"),
       isRightTime = now >= lowerBound && now <= upperBound,
-      isRightDay = moment().day() != 0 && moment().day() != 6,
+      isRightDay = weekends ? true : moment().day() != 0 && moment().day() != 6,
       triggered = isRightDay && isRightTime;
 		
     if(triggered) {
       log("triggered at " + moment().format("MM/DD/YYYY HH:mm:ss.SSS"));
       func();
+    	checkTime(func, hour, minute, interval);
     } else {
       log (moment().format("MM/DD/YYYY HH:mm:ss.SSS") + ": running...will trigger between " + lowerBound + " and " + upperBound);
+    	checkTime(func, hour, minute, interval, weekends);
     }
-    checkTime(func, hour, minute, interval);
   }
-, checkTime = function checkTime (func, hour, minute, interval){
+, checkTime = function checkTime (func, hour, minute, interval, weekends){
     hour = hour != null ? hour : 8;
     minute = minute != null ? minute : 30;
     interval = interval != null ? interval : 600000;
+		
 		const 
 			  timeObj = makeConversions(interval/2)
 			, lowerBound = moment()
@@ -48,10 +51,13 @@ const
 					.seconds(timeObj.s)
 					.milliseconds(timeObj.ms)
 					.format("HH:mm:ss.SSS")
-    log (moment().format("MM/DD/YYYY HH:mm:ss.SSS") 
-			+ ": running...will trigger between " 
-			+ lowerBound + " and " + upperBound);
-    setTimeout(timeoutFunc.bind(this, func, hour, minute, interval, lowerBound, upperBound), interval);
+    if (firstRun) {
+			log (moment().format("MM/DD/YYYY HH:mm:ss.SSS") 
+				+ ": running...will trigger between " 
+				+ lowerBound + " and " + upperBound);
+			firstRun = false;
+		}
+    setTimeout(timeoutFunc.bind(this, func, hour, minute, interval, lowerBound, upperBound, weekends), interval);
   }
 , nil = null;
 

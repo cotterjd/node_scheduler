@@ -1,2 +1,2 @@
-# weekday_scheduler
-simple way to run functions [week]daily 
+# node_scheduler
+simple way to run functions daily 

@@ -21,28 +21,41 @@ var
 , getAsyncFunctions = function (obj) {
 		return function (cb) {
     	const
-    	  now = moment().format("MM/DD/YYYY HH:mm:ss.SSS"),
+				format = "MM/DD/YYYY HH:mm:ss.SSS",
+    	  now = moment().format(format),
     	  isRightTime = now >= obj.lowerBound && now <= obj.upperBound,
     	  isRightDay = obj.weekends ? true : moment().day() != 0 && moment().day() != 6,
-    	  triggered = isRightDay && isRightTime;
+    	  triggered = isRightDay && isRightTime,
+				setColor = "\x1b["+obj.color+"m",
+				resetColor = "\x1b[0m",
+				functionName = setColor + obj.func.name + resetColor,
+				triggerTime = obj.hour + ": " + obj.minute,
+				lowerBoundTime = moment(obj.lowerBound, format).format("hh:mm a"),
+				upperBoundTime = moment(obj.upperBound, format).format("hh:mm a"),
+				day = moment(obj.upperBound, format).format("ddd MMM Do"),
+				range = setColor + lowerBoundTime + resetColor + " and " + setColor + upperBoundTime + resetColor + " on " + day 
+				;
 			
     	if(triggered) {
     	  log(obj.func.name + " triggered at " + now);
     	  obj.func();
     	} else {
-    	  log (now + ": running...will trigger " + obj.func.name + " between " + obj.lowerBound + " and " + obj.upperBound);
+    	  log (now + ": running...will trigger " + functionName + " between " + range);
     	}
 
 			return cb()
 		}
 	}
-, checkTime = function (funcs, interval) { 
-		const asyncFuncs = R.map(getAsyncFunctions, funcs)	
+, checkTime = function (funcObjects, interval) { 
+		const 
+		colorNums = [31, 32, 33, 34, 35, 36],
+		index = Math.round(Math.random() * (colorNums.length-1)),
+		asyncFuncs = R.pipe(R.map(x => {x.color=colorNums[index]; return x}), R.map(getAsyncFunctions))(funcObjects)	
 		;
 
 		async.series(asyncFuncs, function (err, results) {
 			if(err) log(err);
-			setTimeout(checkTime.bind(this, funcs, interval), interval);		
+			setTimeout(checkTime.bind(this, funcObjects, interval), interval);		
 		});
   }
 , getDefaults = function (obj) {

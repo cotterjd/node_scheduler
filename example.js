@@ -1,4 +1,4 @@
-//example is for running 3 functions at 4:30 pm
+//example is for running functions at 4:30 pm. 
 const
   scheduler = require('./scheduler'),
   func = function () {
@@ -14,19 +14,21 @@ const
 		func: func,
 		hour: 16,
 		minute: 30,
-		weekends: true
+		weekends: true, //will run on weekends also
+		date: 14  //will only run on the 14th of each month
 	}, 
 	obj1 = {
 		func: func1,
 		hour: 16,
 		minute: 30,
-		weekends: true
+		date: 15  //will not run on weekends even if the 15th falls on a weekend since weekends is not set to true
 	}, 
+	//will run at 4:30 every day including weekends
 	obj2 = {
 		func: func2,
 		hour: 16,
 		minute: 30,
-		weekends: true
+		weekends: true,
 	}
 	funcs = [obj0, obj1, obj2]
 	;

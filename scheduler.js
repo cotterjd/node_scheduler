@@ -66,13 +66,15 @@ var
 , getBounds = R.curry(function (interval, obj) {
 		const 
 			  timeObj = makeConversions(interval/2)
-			, lowerBound = moment()
+			, format = "MM/DD/YYYY"
+			, date = obj.date ? moment().date(obj.date).format(format) : moment().format(format)
+			, lowerBound = moment(date, format)
 					.hour(obj.hour - timeObj.h)
 					.minute(obj.minute - timeObj.m)
 					.seconds(0 - timeObj.s)
 					.milliseconds(0 - timeObj.ms)
 					.format("MM/DD/YYYY HH:mm:ss.SSS")
-			, upperBound = moment()
+			, upperBound = moment(date, format)
 					.hour(obj.hour + timeObj.h)
 					.minute(obj.minute + timeObj.m)
 					.seconds(timeObj.s)
@@ -87,10 +89,10 @@ var
 		obj.upperBound = upperBound;
 		return obj;
  	})
-, main = function (funcs, interval){
+, main = function (objs, interval){
     interval = interval != null ? interval : 600000;
 		
-		const funcObjects = R.pipe(R.map(getDefaults), R.map(getBounds(interval)))(funcs)
+		const funcObjects = R.pipe(R.map(getDefaults), R.map(getBounds(interval)))(objs)
     setTimeout(checkTime.bind(this, funcObjects, interval), interval);
   }
 , nil = null;

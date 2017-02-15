@@ -21,20 +21,20 @@ var
 	}
 , setColor = x => "\x1b["+x+"m"
 , resetColor = () => "\x1b[0m"
+, longFormat = "MM/DD/YYYY HH:mm:ss:SSS"
 , getAsyncFunctions = function (obj) {
 		return function (cb) {
     	const
-				format = "MM/DD/YYYY HH:mm:ss.SSS",
-    	  now = moment().format(format),
+    	  now = moment().format(longFormat),
     	  isRightTime = now >= obj.lowerBound && now <= obj.upperBound,
     	  isRightDay = obj.weekends ? true : moment().day() != 0 && moment().day() != 6,
     	  triggered = isRightDay && isRightTime,
 				setcolor = setColor(obj.color),
 				functionName = setcolor + obj.func.name + resetColor(),
 				triggerTime = obj.hour + ": " + obj.minute,
-				lowerBoundTime = moment(obj.lowerBound, format).format("hh:mm a"),
-				upperBoundTime = moment(obj.upperBound, format).format("hh:mm a"),
-				day = moment(obj.upperBound, format).format("ddd MMM Do"),
+				lowerBoundTime = moment(obj.lowerBound, longFormat).format("hh:mm a"),
+				upperBoundTime = moment(obj.upperBound, longFormat).format("hh:mm a"),
+				day = moment(obj.upperBound, longFormat).format("ddd MMM Do"),
 				range = setcolor + lowerBoundTime + resetColor() + " and " + setcolor + upperBoundTime + resetColor() + " on " + day 
 				;
 			
@@ -74,23 +74,32 @@ var
 		obj.minute = obj.minute != null ? obj.minute : 30;
 		return obj;
  	}
+, triggerDateObject = (obj) => {
+		if (obj.date) return moment().date(obj.date).hour(obj.hour).minute(obj.minute).format(longFormat);
+		else throw "No date property on object"
+	}
+, today = f => moment().format(f)
 , getBounds = R.curry(function (interval, obj) {
 		const 
 			  timeObj = makeConversions(interval/2)
+			, triggerDayHasPassed = obj.date ? triggerDateObject(obj) < today(longFormat) : false
+			, incrementMonth = moment().month(moment().month() + 1).date(obj.date || moment().date()).format(longFormat)
 			, format = "MM/DD/YYYY"
-			, date = obj.date ? moment().date(obj.date).format(format) : moment().format(format)
-			, lowerBound = moment(date, format)
+			, date = obj.date ? 
+					(triggerDayHasPassed ? incrementMonth : today(longFormat)) : 
+					today(longFormat)
+			, lowerBound = moment(date, longFormat)
 					.hour(obj.hour - timeObj.h)
 					.minute(obj.minute - timeObj.m)
 					.seconds(0 - timeObj.s)
 					.milliseconds(0 - timeObj.ms)
-					.format("MM/DD/YYYY HH:mm:ss.SSS")
-			, upperBound = moment(date, format)
+					.format(longFormat)
+			, upperBound = moment(date, longFormat)
 					.hour(obj.hour + timeObj.h)
 					.minute(obj.minute + timeObj.m)
 					.seconds(timeObj.s)
 					.milliseconds(timeObj.ms)
-					.format("MM/DD/YYYY HH:mm:ss.SSS")
+					.format(longFormat)
 			;
 
 		obj.lowerBound = lowerBound;
@@ -100,7 +109,7 @@ var
 , logTimes = R.curry(function (color, obj) {
 		const 
 			format = "ddd MMM Do"
-		, date = obj.date ? moment().date(obj.date).format(format) : moment().format(format);
+		, date = obj.date ? (triggerDateObject(obj) < moment().format(longFormat) ? moment().month(moment().month() + 1).date(obj.date).format(format) : moment().format(format)) : moment().format(format);
 		log("running. " + setColor(color) + obj.func.name + resetColor() + " will be triggered around " + setColor(color) + obj.hour + ":" + obj.minute + resetColor() + " on " + date);
 	})
 , main = function (objs, interval = 600000){

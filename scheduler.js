@@ -19,6 +19,8 @@ var
 				h: h
 			}
 	}
+, setColor = x => "\x1b["+x+"m"
+, resetColor = () => "\x1b[0m"
 , getAsyncFunctions = function (obj) {
 		return function (cb) {
     	const
@@ -27,14 +29,13 @@ var
     	  isRightTime = now >= obj.lowerBound && now <= obj.upperBound,
     	  isRightDay = obj.weekends ? true : moment().day() != 0 && moment().day() != 6,
     	  triggered = isRightDay && isRightTime,
-				setColor = "\x1b["+obj.color+"m",
-				resetColor = "\x1b[0m",
-				functionName = setColor + obj.func.name + resetColor,
+				setcolor = setColor(obj.color),
+				functionName = setcolor + obj.func.name + resetColor(),
 				triggerTime = obj.hour + ": " + obj.minute,
 				lowerBoundTime = moment(obj.lowerBound, format).format("hh:mm a"),
 				upperBoundTime = moment(obj.upperBound, format).format("hh:mm a"),
 				day = moment(obj.upperBound, format).format("ddd MMM Do"),
-				range = setColor + lowerBoundTime + resetColor + " and " + setColor + upperBoundTime + resetColor + " on " + day 
+				range = setcolor + lowerBoundTime + resetColor() + " and " + setcolor + upperBoundTime + resetColor() + " on " + day 
 				;
 			
     	if(triggered) {
@@ -47,12 +48,18 @@ var
 			return cb()
 		}
 	}
+, randomColorNum = function () {
+		const 
+			colorNums = [31, 32, 33, 34, 35, 36]
+		, index = Math.round(Math.random() * (colorNums.length-1));
+
+		return colorNums[index];
+	}
 , checkTime = function (funcObjects, interval) { 
 		const 
-		colorNums = [31, 32, 33, 34, 35, 36],
-		index = Math.round(Math.random() * (colorNums.length-1)),
+		color = randomColorNum(),
 		asyncFuncs = R.pipe(
-				R.map(x => {x.color=colorNums[index]; return x})
+				R.map(x => {x.color=color; return x})
 			, R.map(getAsyncFunctions)
 			)(R.map(getBounds(interval), funcObjects))	
 		;
@@ -90,17 +97,17 @@ var
 		obj.upperBound = upperBound;
 		return obj;
  	})
-, logTimes = function (obj) {
+, logTimes = R.curry(function (color, obj) {
 		const 
 			format = "ddd MMM Do"
 		, date = obj.date ? moment().date(obj.date).format(format) : moment().format(format);
-		log("running. " + obj.func.name + " will be triggered around " + obj.hour + ":" + obj.minute + " on " + date);
-	}
+		log("running. " + setColor(color) + obj.func.name + resetColor() + " will be triggered around " + setColor(color) + obj.hour + ":" + obj.minute + resetColor() + " on " + date);
+	})
 , main = function (objs, interval = 600000){
 		
 		const funcObjects = R.map(getDefaults, objs);
 
-		funcObjects.forEach(logTimes);
+		funcObjects.forEach(logTimes(randomColorNum()));
     setTimeout(checkTime.bind(this, funcObjects, interval), interval);
   }
 , nil = null;

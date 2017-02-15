@@ -3,6 +3,7 @@ var
 , R = require('ramda')
 , async = require('async')
 , log = console.log
+, logI = x => {log(x); return x;} 
 , firstRun = true 
 , makeConversions = function (milliseconds) {
 		const
@@ -50,7 +51,10 @@ var
 		const 
 		colorNums = [31, 32, 33, 34, 35, 36],
 		index = Math.round(Math.random() * (colorNums.length-1)),
-		asyncFuncs = R.pipe(R.map(x => {x.color=colorNums[index]; return x}), R.map(getAsyncFunctions))(funcObjects)	
+		asyncFuncs = R.pipe(
+				R.map(x => {x.color=colorNums[index]; return x})
+			, R.map(getAsyncFunctions)
+			)(R.map(getBounds(interval), funcObjects))	
 		;
 
 		async.series(asyncFuncs, function (err, results) {
@@ -82,17 +86,21 @@ var
 					.format("MM/DD/YYYY HH:mm:ss.SSS")
 			;
 
-		log (moment().format("MM/DD/YYYY HH:mm:ss.SSS") 
-			+ ": running...will trigger " + obj.func.name + " between " 
-			+ lowerBound + " and " + upperBound);
 		obj.lowerBound = lowerBound;
 		obj.upperBound = upperBound;
 		return obj;
  	})
-, main = function (objs, interval){
-    interval = interval != null ? interval : 600000;
+, logTimes = function (obj) {
+		const 
+			format = "ddd MMM Do"
+		, date = obj.date ? moment().date(obj.date).format(format) : moment().format(format);
+		log("running. " + obj.func.name + " will be triggered around " + obj.hour + ":" + obj.minute + " on " + date);
+	}
+, main = function (objs, interval = 600000){
 		
-		const funcObjects = R.pipe(R.map(getDefaults), R.map(getBounds(interval)))(objs)
+		const funcObjects = R.map(getDefaults, objs);
+
+		funcObjects.forEach(logTimes);
     setTimeout(checkTime.bind(this, funcObjects, interval), interval);
   }
 , nil = null;

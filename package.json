@@ -1,5 +1,5 @@
 {
-  "name": "weekday_scheduler",
+  "name": "node_scheduler",
   "version": "2.0.2",
   "description": "simple way to run daily functions",
   "main": "example.js",

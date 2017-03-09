@@ -86,7 +86,7 @@ var
 			, incrementMonth = moment().month(moment().month() + 1).date(obj.date || moment().date()).format(longFormat)
 			, format = "MM/DD/YYYY"
 			, date = obj.date ? 
-					(triggerDayHasPassed ? incrementMonth : today(longFormat)) : 
+					(triggerDayHasPassed ? incrementMonth : moment().date(obj.date).format(longFormat)) : 
 					today(longFormat)
 			, lowerBound = moment(date, longFormat)
 					.hour(obj.hour - timeObj.h)
@@ -109,7 +109,7 @@ var
 , logTimes = R.curry(function (color, obj) {
 		const 
 			format = "ddd MMM Do"
-		, date = obj.date ? (triggerDateObject(obj) < moment().format(longFormat) ? moment().month(moment().month() + 1).date(obj.date).format(format) : moment().format(format)) : moment().format(format);
+		, date = obj.date ? (triggerDateObject(obj) < moment().format(longFormat) ? moment().month(moment().month() + 1).date(obj.date).format(format) : moment().date(obj.date).format(format)) : moment().format(format);
 		log("running. " + setColor(color) + obj.func.name + resetColor() + " will be triggered around " + setColor(color) + obj.hour + ":" + obj.minute + resetColor() + " on " + date);
 	})
 , main = function (objs, interval = 600000){

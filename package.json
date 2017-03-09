@@ -1,6 +1,6 @@
 {
   "name": "node_scheduler",
-  "version": "2.0.3",
+  "version": "2.0.4",
   "description": "simple way to run daily functions",
   "main": "example.js",
   "scripts": {
